@@ -1,17 +1,14 @@
 # router.py
-import os
 import subprocess
 import platform
 import socket
-from dotenv import load_dotenv
 
-load_dotenv()
-
-ROUTER_IP = os.getenv("ROUTER_IP", "192.168.1.1")
-EXPECTED_SSID = os.getenv("ROUTER_SSID", "selese")
+# ====== KONFIGURASI LANGSUNG ======
+ROUTER_IP = "192.168.1.1"
+EXPECTED_SSID = "selese"
+# ==================================
 
 def ping_router(ip: str = ROUTER_IP, count: int = 3) -> dict:
-    """Ping router untuk cek apakah online & ukur latency."""
     param = "-n" if platform.system().lower() == "windows" else "-c"
     try:
         result = subprocess.run(
@@ -19,7 +16,6 @@ def ping_router(ip: str = ROUTER_IP, count: int = 3) -> dict:
             capture_output=True, text=True, timeout=10
         )
         alive = result.returncode == 0
-        # ambil latency rata-rata (parsing sederhana)
         latency = None
         for line in result.stdout.splitlines():
             if "avg" in line.lower() or "average" in line.lower():
@@ -29,13 +25,8 @@ def ping_router(ip: str = ROUTER_IP, count: int = 3) -> dict:
     except Exception as e:
         return {"router_ip": ip, "online": False, "raw": str(e)}
 
+
 def get_current_ssid() -> str | None:
-    """
-    Ambil nama WiFi yang sedang terhubung.
-    - Windows: netsh wlan show interfaces
-    - Linux:   nmcli -t -f active,ssid dev wifi
-    - macOS:   /System/Library/PrivateFrameworks/Apple80211.framework/.../airport -I
-    """
     system = platform.system().lower()
     try:
         if system == "windows":
@@ -66,8 +57,8 @@ def get_current_ssid() -> str | None:
         return None
     return None
 
+
 def verify_network() -> dict:
-    """Ringkasan: apakah terhubung ke SSID yang diharapkan + status router."""
     ssid = get_current_ssid()
     router = ping_router()
     return {
