@@ -1,0 +1,4 @@
+streamlit
+yyds-net-scan
+speedtest-cli
+pandas
