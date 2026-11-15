@@ -2,3 +2,5 @@ streamlit
 yyds-net-scan
 speedtest-cli
 pandas
+python-dotenv
+requests
